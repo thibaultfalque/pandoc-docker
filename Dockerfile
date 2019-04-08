@@ -1,10 +1,9 @@
-FROM haskell:8
+FROM alpine:latest
 
 LABEL  maintainer="Stephen Steiner <ntwrkguru@gmail.com>"
 
 # Install dependencies
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
-    && apt-get update -y \
+RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
        texlive-full \
        texlive-xetex latex-xcolor \
@@ -16,9 +15,11 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
        lmodern \
        libghc-text-icu-dev \
        zip \
+       wget \
+       build-essential \
     && apt-get clean
 
 # Install cabal and then pandoc + citeproc
-RUN cabal update && cabal install pandoc pandoc-citeproc --force-reinstalls
+RUN wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb && dpkg -i pandoc-2.7.2-1-amd64.deb
 
 WORKDIR /build
